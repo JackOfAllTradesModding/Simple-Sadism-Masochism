@@ -16,11 +16,17 @@ Event OnPlayerLoadGame()
 EndEvent
 
 Event OnHit(ObjectReference akAggressor, Form akSource, Projectile akProjectile, bool abPowerAttack, bool abSneakAttack, bool abBashAttack, bool abHitBlocked)
+	config.Log("OnHit Event Starting.");
 	Float newHealth = PlayerREf.GetActorValuePercentage("Health") * 100;
 	If (newHealth != Health)	
 		;Damage was dealt
+		config.Log("Arousal before hit: " + SLA.GetActorArousal(PlayerREF))
 		SLA.SetActorExposure(PlayerREF, masoExposure(newHealth));
 		Health = newHealth; Update health value
+		int newArousal = SLA.GetActorArousal(PlayerREF);
+		config.Log("Arousal updated to: " + newArousal);
+	Else
+		config.Log("No damage dealt")
 	EndIf
 	;RegisterForSingleUpdate(3.0);
 EndEvent 
@@ -49,7 +55,8 @@ Int Function masoExposure(float newHealth)
 	If (config.bThreshold && PlayerRef.GetActorValuePercentage("Health") <= config.fThresholdVal)
 		exp = 0
 	EndIf
-
+	
+	config.Log("Difference in exposure is " + exp);
 	exp = exp + SLA.GetActorExposure(PlayerREF);
 	
 	return exp;

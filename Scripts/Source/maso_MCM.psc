@@ -27,16 +27,19 @@ Float Property fTotalRateScale = 0.1 Auto;
 {Scale this applies at}
 ;NOTE: THIS FEATURE UNTESTED
 
-Event OnInit()
-	
-EndEvent
-
-Event OnConfigInit()
-	
-EndEvent
+Bool Property TraceLog = False Auto;
+{Determines whether to print debug messages}
 
 Event OnPageReset(String Page)
 	
+	If (Page == "")
+		;Display Splash
+		LoadCustomContent("SimpleMasochism/SimpleMasochism_Flash.dds", 0, 41)
+		;X = 376 - (width/2) = 376 - 752/2 = 376 - 376 = 0
+		;Y = 223 - (height/2) = 223 - 364/2 = 223 - 182 = 41
+	Else
+		UnloadCustomContent();
+	EndIf
 	If (Page == "Options")
 		SetCursorPosition(0);
 		SetCursorFillMode(LEFT_TO_RIGHT);
@@ -58,14 +61,33 @@ Event OnPageReset(String Page)
 		;AddEmptyOption();
 		;AddToggleOptionST("Threshold", "Use Threshold", bThreshold);
 		;AddSliderOptionST("MarginalScale", "Scale", fThresholdVal);
-	Else
-		;Display Splash
-		LoadCustomContent("SimpleMasochism/SimpleMasochism_Flash.dds", 0, 41)
-		;X = 376 - (width/2) = 376 - 752/2 = 376 - 376 = 0
-		;Y = 223 - (height/2) = 223 - 364/2 = 223 - 182 = 41
+		AddToggleOptionST("TraceToggle", "Debug Logging", TraceLog);
 	EndIf
 EndEvent
 
+Function Log(string msg)
+
+	If(TraceLog)
+		Debug.Trace("Simple Masochims: " + msg)
+	EndIf
+
+EndFunction
+
+State TraceToggle
+	Event OnSelectST()
+		TraceLog = !TraceLog;
+		SetToggleOptionValueST(TraceLog);
+	EndEvent
+	
+	Event OnDefaultST()
+		TraceLog = False;
+		SetToggleOptionValueST(TraceLog);
+	EndEvent
+	
+	Event OnHighlightST()
+		SetInfoText("Toggles papyrus logging for debugging reasons");
+	EndEvent
+EndState
 
 State UseMarginal
 	Event OnSelectST()
